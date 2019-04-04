@@ -105,3 +105,6 @@ venv.bak/
 
 # vscode local config
 .vscode/
+
+# django migrations
+migrations/

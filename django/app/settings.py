@@ -25,7 +25,7 @@ SECRET_KEY = 'rw35^rk&c)&!wv%9#1y1sb=_d+0%$)40y2bqj2l*xw8(y_wd!^'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', 'bitter-falcon-100.localtunnel.me']
 
 
 # Application definition

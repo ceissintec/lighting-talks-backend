@@ -10,6 +10,7 @@ class Submission(models.Model):
     description = models.TextField()
     is_accepted = models.BooleanField(default=False)
     date = models.DateTimeField(null=True, blank=True)
+    email = models.EmailField()
 
     def __str__(self):
         return self.title

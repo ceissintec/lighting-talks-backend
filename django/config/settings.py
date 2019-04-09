@@ -25,7 +25,7 @@ SECRET_KEY = 'rw35^rk&c)&!wv%9#1y1sb=_d+0%$)40y2bqj2l*xw8(y_wd!^'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'bitter-falcon-100.localtunnel.me']
+ALLOWED_HOSTS = ['localhost', '104.248.1.88']
 
 
 # Application definition
@@ -125,3 +125,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = STATIC_ROOT = os.path.join(BASE_DIR, 'gathered_static_files')

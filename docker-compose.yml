@@ -1,7 +1,7 @@
 version: "3"
 
 services:
-  django:
+  web:
     container_name: django_server
     image: docker_ceiss_django
     build:
@@ -11,6 +11,6 @@ services:
     volumes:
       - ./django:/django
     command: >
-      sh -c "python manage.py migrate && 
-             python manage.py runserver 0.0.0.0:8000"
+      sh -c "./django/manage.py migrate &&
+             ./scripts/start_gunicorn.sh"
     

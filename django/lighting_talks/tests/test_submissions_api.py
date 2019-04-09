@@ -15,7 +15,8 @@ def create_submission(title, accepted=True):
         first_name="Test",
         last_name="Case",
         title=title,
-        is_accepted=accepted
+        is_accepted=accepted,
+        email='test@testing.com'
     )
 
 

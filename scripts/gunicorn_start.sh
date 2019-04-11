@@ -11,21 +11,21 @@ DJANGO_WSGI_MODULE=config.wsgi
 
 cd $DJANGODIR
 
-
 # Create the run directory if it doesn't exist
 RUNDIR=$(dirname $SOCKFILE)
 test -d $RUNDIR || mkdir -p $RUNDIR
 
-
+# Set up Django looking for changes
+./manage.py collectstatic --noinput
 ./manage.py migrate
 
 # Start Gunicorn processes
-echo Starting Gunicorn.
+# echo Starting Gunicorn.
 exec gunicorn $DJANGO_WSGI_MODULE:application \
     --name $NAME \
-    --bind 0.0.0.0:80 \
+    --bind=unix:$SOCKFILE \
     --workers $NUM_WORKERS \
-    --log-level=debug \
+    --log-level=info \
     --log-file=$LOGFILE \
-    # --daemon
+    --daemon
     # --bind=unix:$SOCKFILE \

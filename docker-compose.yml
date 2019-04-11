@@ -11,5 +11,5 @@ services:
     volumes:
       - ./django:/django
     command: >
-      sh -c "./scripts/gunicorn_start.sh"
+      sh -c "./scripts/gunicorn_start.sh &&  nginx -c /etc/nginx/nginx.conf -g 'daemon off;'"
     

@@ -7,10 +7,9 @@ services:
     build:
       context: .
     ports:
-      - "8000:8000"
+      - "80:80"
     volumes:
       - ./django:/django
     command: >
-      sh -c "./django/manage.py migrate &&
-             ./scripts/start_gunicorn.sh"
+      sh -c "./scripts/gunicorn_start.sh"
     

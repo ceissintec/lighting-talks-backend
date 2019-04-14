@@ -1,15 +1,35 @@
-version: "3"
+version: "3.3"
 
 services:
   web:
-    container_name: django_server
-    image: docker_ceiss_django
-    build:
+    build:  
       context: .
+    depends_on: 
+      - db
     ports:
       - "80:80"
+    environment: 
+      - DJANGO_SECRET_KEY
+      - DJANGO_DB_NAME
+      - DJANGO_DB_USER
+      - DJANGO_DB_PASSWORD
+      - DJANGO_DB_HOST
+      - DJANGO_DB_PORT
     volumes:
       - ./django:/django
     command: >
-      sh -c "./scripts/gunicorn_start.sh &&  nginx -c /etc/nginx/nginx.conf -g 'daemon off;'"
-    
+      sh -c "./scripts/nginx_start.sh && 
+             ./scripts/gunicorn_start.sh"
+  db:
+    image: postgres:10.5-alpine
+    ports:
+      - "5432:5432"
+    environment: 
+      - POSTGRES_USER
+      - POSTGRES_DB
+      - POSTGRESS_PASSWORD
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

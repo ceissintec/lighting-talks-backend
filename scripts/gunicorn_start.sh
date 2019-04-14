@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # File structure inspired by the following tutorial: http://michal.karzynski.pl/blog/2013/06/09/django-nginx-gunicorn-virtualenv-supervisor/
 
@@ -20,12 +20,13 @@ test -d $RUNDIR || mkdir -p $RUNDIR
 ./manage.py migrate
 
 # Start Gunicorn processes
-# echo Starting Gunicorn.
+echo Starting Gunicorn.
 exec gunicorn $DJANGO_WSGI_MODULE:application \
     --name $NAME \
     --bind=unix:$SOCKFILE \
     --workers $NUM_WORKERS \
-    --log-level=info \
+    --log-level=debug \
     --log-file=$LOGFILE \
-    --daemon
+    # --daemon
     # --bind=unix:$SOCKFILE \
+

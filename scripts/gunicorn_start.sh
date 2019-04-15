@@ -3,13 +3,22 @@
 # File structure inspired by the following tutorial: http://michal.karzynski.pl/blog/2013/06/09/django-nginx-gunicorn-virtualenv-supervisor/
 
 NAME='django_server'
-DJANGODIR='/django'
-SOCKFILE='/django/run/gunicorn.sock'
+DJANGODIR='/ceiss_backend/django'
+SOCKFILE='/ceiss_backend/django/run/gunicorn.sock'
 LOGFILE='/var/log/ceiss_backend/ceiss_backend.log' 
 NUM_WORKERS=3
 DJANGO_WSGI_MODULE=config.wsgi
 
 cd $DJANGODIR
+
+# Check if postgres is ready
+echo "Waiting for postgres..."
+
+    while ! nc -z $DJANGO_DB_HOST $DJANGO_DB_PORT; do
+      sleep 0.1
+    done
+
+echo "PostgreSQL started"
 
 # Create the run directory if it doesn't exist
 RUNDIR=$(dirname $SOCKFILE)
@@ -17,7 +26,7 @@ test -d $RUNDIR || mkdir -p $RUNDIR
 
 # Set up Django looking for changes
 ./manage.py collectstatic --noinput
-./manage.py migrate
+./manage.py migrate --noinput
 
 # Start Gunicorn processes
 echo Starting Gunicorn.
@@ -26,7 +35,9 @@ exec gunicorn $DJANGO_WSGI_MODULE:application \
     --bind=unix:$SOCKFILE \
     --workers $NUM_WORKERS \
     --log-level=debug \
-    --log-file=$LOGFILE \
-    # --daemon
+    --reload
+    --access-logfile - 
+    --error-logfile -
     # --bind=unix:$SOCKFILE \
+    # --log-file=$LOGFILE \
 

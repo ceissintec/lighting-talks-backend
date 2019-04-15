@@ -6,8 +6,7 @@ services:
       context: .
     depends_on: 
       - db
-    ports:
-      - "80:80"
+    restart: always
     environment: 
       - DJANGO_SECRET_KEY
       - DJANGO_DB_NAME
@@ -16,20 +15,29 @@ services:
       - DJANGO_DB_HOST
       - DJANGO_DB_PORT
     volumes:
-      - ./django:/django
+      - ./django:/ceiss_backend/django
+      - static_files:/ceiss_backend/django/static_files
+      - gunicorn_socket:/ceiss_backend/django/run
     command: >
-      sh -c "./scripts/nginx_start.sh && 
-             ./scripts/gunicorn_start.sh"
+      sh -c "./scripts/gunicorn_start.sh"
   db:
     image: postgres:10.5-alpine
-    ports:
-      - "5432:5432"
     environment: 
       - POSTGRES_USER
       - POSTGRES_DB
       - POSTGRESS_PASSWORD
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
+  nginx:
+    build: ./nginx
+    ports:
+      - 80:80
+    volumes: 
+      - static_files:/ceiss_backend/django/static_files
+      - gunicorn_socket:/ceiss_backend/django/run
+    depends_on: 
+      - web
 volumes:
   postgres_data:
+  static_files:
+  gunicorn_socket:

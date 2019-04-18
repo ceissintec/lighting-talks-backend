@@ -1,7 +1,10 @@
 version: "3.3"
 
+# TODO: Separate files for development, testing and production
+
 services:
   web:
+    # TODO: Build web image using a building service (like docker hub)
     build:  
       context: .
     depends_on: 
@@ -16,10 +19,13 @@ services:
       - DJANGO_DB_PORT
     volumes:
       - ./django:/ceiss_backend/django
-      - static_files:/ceiss_backend/django/static_files
+      - static_volume:/ceiss_backend/django/static_files
       - gunicorn_socket:/ceiss_backend/django/run
     command: >
       sh -c "./scripts/gunicorn_start.sh"
+    deploy:
+      mode: replicated
+      replicas: 1
   db:
     image: postgres:10.5-alpine
     environment: 
@@ -28,16 +34,23 @@ services:
       - POSTGRESS_PASSWORD
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    deploy:
+      mode: replicated
+      replicas: 1
   nginx:
+    # TODO: Build web image using a building service (like docker hub)
     build: ./nginx
     ports:
       - 80:80
     volumes: 
-      - static_files:/ceiss_backend/django/static_files
-      - gunicorn_socket:/ceiss_backend/django/run
+      - static_volume:/static
+      - gunicorn_socket:/socket
     depends_on: 
       - web
+    deploy:
+      mode: replicated
+      replicas: 1
 volumes:
   postgres_data:
-  static_files:
+  static_volume:
   gunicorn_socket:

@@ -5,7 +5,6 @@
 NAME='django_server'
 DJANGODIR='/ceiss_backend/django'
 SOCKFILE='/ceiss_backend/django/run/gunicorn.sock'
-LOGFILE='/var/log/ceiss_backend/ceiss_backend.log' 
 NUM_WORKERS=3
 DJANGO_WSGI_MODULE=config.wsgi
 
@@ -34,10 +33,8 @@ exec gunicorn $DJANGO_WSGI_MODULE:application \
     --name $NAME \
     --bind=unix:$SOCKFILE \
     --workers $NUM_WORKERS \
-    --log-level=debug \
+    --log-level=info \
     --reload
     --access-logfile - 
     --error-logfile -
-    # --bind=unix:$SOCKFILE \
-    # --log-file=$LOGFILE \
 

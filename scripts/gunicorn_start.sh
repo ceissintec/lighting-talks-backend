@@ -31,7 +31,7 @@ test -d $RUNDIR || mkdir -p $RUNDIR
 echo Starting Gunicorn.
 exec gunicorn $DJANGO_WSGI_MODULE:application \
     --name $NAME \
-    --bind=unix:$SOCKFILE \
+    --bind 0.0.0.0:8000 \
     --workers $NUM_WORKERS \
     --log-level=info \
     --reload

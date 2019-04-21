@@ -5,6 +5,7 @@ version: "3.3"
 services:
   web:
     # TODO: Build web image using a building service (like docker hub)
+    # image: 
     build:  
       context: .
     depends_on: 
@@ -18,14 +19,18 @@ services:
       - DJANGO_DB_HOST
       - DJANGO_DB_PORT
     volumes:
-      - ./django:/ceiss_backend/django
+      - ./django:/ceiss_backend/django # Comment this line on swarm mode
       - static_volume:/ceiss_backend/django/static_files
       - gunicorn_socket:/ceiss_backend/django/run
     command: >
       sh -c "./scripts/gunicorn_start.sh"
     deploy:
+      restart_policy:
+        condition: on-failure
       mode: replicated
-      replicas: 1
+      replicas: 3
+    networks: 
+      - ceiss_network
   db:
     image: postgres:10.5-alpine
     environment: 
@@ -35,10 +40,15 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     deploy:
+      restart_policy:
+        condition: on-failure
       mode: replicated
       replicas: 1
+    networks: 
+      - ceiss_network
   nginx:
     # TODO: Build web image using a building service (like docker hub)
+    # image: 
     build: ./nginx
     ports:
       - 80:80
@@ -48,9 +58,16 @@ services:
     depends_on: 
       - web
     deploy:
-      mode: replicated
-      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints: [node.role == manager]
+    networks: 
+      - ceiss_network
 volumes:
   postgres_data:
   static_volume:
   gunicorn_socket:
+
+networks:
+  ceiss_network: 

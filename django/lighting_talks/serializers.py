@@ -7,5 +7,5 @@ class SubmissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Submission
         fields = ('id', 'first_name', 'last_name', 'title',
-                  'description', 'date')
+                  'description', 'date', 'email')
         read_only_fields = ('id', 'date',)

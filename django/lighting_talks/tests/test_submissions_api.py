@@ -15,6 +15,7 @@ def create_submission(title, accepted=True):
         first_name="Test",
         last_name="Case",
         title=title,
+        description='Description',
         is_accepted=accepted,
         email='test@testing.com'
     )
@@ -62,15 +63,12 @@ class PublicLightingTalksApiTests(TestCase):
             'first_name': 'Test',
             'last_name': 'Case',
             'title': 'Test title',
-            'description': 'Test description'
+            'description': 'Test description',
+            'email': 'test@test.com'
         }
         self.client.post(SUBMISSION_URL_LIST, payload)
 
-        exists = Submission.objects.filter(
-            first_name=payload['first_name'],
-            last_name=payload['last_name'],
-            title=payload['title'],
-        ).exists()
+        exists = Submission.objects.filter(**payload).exists()
 
         self.assertTrue(exists)
 
@@ -91,7 +89,8 @@ class PublicLightingTalksApiTests(TestCase):
         submission = create_submission('Lighting Talk 1')
         serializer = SubmissionSerializer(submission)
         create_submission('Lighting Talk 2')
-        payload = {'pk': 1}
+        # Postgres doesn't reset ids to 1 after each test
+        payload = {'pk': 6}
 
         res = self.client.get(submission_url_detail(payload))
         self.assertEqual(res.status_code, status.HTTP_200_OK)
@@ -99,10 +98,10 @@ class PublicLightingTalksApiTests(TestCase):
 
     def test_retrieve_single_submission_not_accepted_fails(self):
         """Test retrieving a single valid submission but not accepted fails"""
-        create_submission('Lighting Talk 1', accepted=False)
-        payload = {'pk': 1}
+        create_submission('A lighting talk', accepted=False)
+        payload = {'pk': 8}
 
-        exists = Submission.objects.filter(pk=payload['pk']).exists
+        exists = Submission.objects.filter(title='A lighting talk').exists()
 
         res = self.client.get(submission_url_detail(payload))
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
